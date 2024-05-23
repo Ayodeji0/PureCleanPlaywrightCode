@@ -12,6 +12,7 @@ const HASH_SECRET = process.env.HASH_SECRET;
 function generateToken() {
   return randomBytes(32).toString('hex');
 }
+
 function hashToken(token: string) {
   return createHash('sha256').update(`${token}${HASH_SECRET}`).digest('hex');
 }

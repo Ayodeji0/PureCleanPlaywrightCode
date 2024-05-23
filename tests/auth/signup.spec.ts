@@ -1,38 +1,54 @@
-import { test, expect } from '@playwright/test';
-
+import { test as base, expect, Page } from '@playwright/test';
 import { UrlMapper } from '../.helpers/types';
 import { loginEmailSuccess } from '../.helpers/seed/data/auth';
 import { fillSignupForm } from '../.helpers/actions/auth';
+import { SignupPage } from '../.helpers/actions';
 
-const baseURL = process.env.NEXTAUTH_URL!;
+// CUSTOM FIXTURES TO BE USED IN THE TEST SUITES
+type MyFixtures = {
+  signupPage: SignupPage;
+};
+
+const test = base.extend<MyFixtures>({
+  signupPage: async ({ page }, use) => {
+    const signupPage = new SignupPage(page);
+    await use(signupPage);
+  },
+});
+
+// BASE URL FOR THE APPLICATION
+const baseURL = process.env.BASE_URL
+
+// NAVIGATE TO SIGNUPPAGE BEFORE EACH TEST
 test.beforeEach(async ({ page }) => {
   await page.goto(`${baseURL}${UrlMapper.signupUrl}`);
 });
 
-test.describe.skip('Auth - Signup Form', () => {
-  test('login buttons are disabled until T&C accepted', async ({ page }) => {
-    await expect(
-      page.getByRole('button', { name: 'Get Magic Link' })
-    ).toHaveAttribute('disabled');
-    await expect(page.getByLabel('Sign up using Google')).toHaveAttribute(
-      'disabled'
-    );
+// Describe block for signup form tests
+test.describe('Auth - Signup Form', () => {
+
+ // VERIFY THAT LOGIN BUTTON REMAINS DISABLE UNTIL TERMS AND CONDITIONS BUTTON IS TRIGGERED
+  test('login buttons are disabled until T&C accepted', async ({ signupPage }) => {
+    await expect(signupPage.getMagicLinkButton).toHaveAttribute('disabled', '');
+    await expect(signupPage.googleSignUpButton).toHaveAttribute('disabled', '');
   });
 
-  test('email login button is disabled on empty form', async ({ page }) => {
-    await page.getByLabel("I agree to OwnerSearch'sTerms").click();
-    await expect(
-      page.getByRole('button', { name: 'Get Magic Link' })
-    ).toHaveAttribute('disabled');
+  // VERIFY THAT EMAIL BUTTON REMAINS DISABLE WHEN FORM IS EMPTY
+  test('email login button is disabled on empty form', async ({ signupPage }) => {
+    await signupPage.clickTermsCheckbox();
+    await expect(signupPage.getMagicLinkButton).toHaveAttribute('disabled', '');
   });
 
-  test('should be able to go to login page', async ({ page }) => {
-    await page.getByRole('link', { name: 'Sign In' }).click();
+  // ASSERTION TO CONFIRM IF USER CAN GO TO THE LOGIN PAGE
+  test('should be able to go to login page', async ({ signupPage, page }) => {
+    await signupPage.clickSignInLink();
     await expect(page).toHaveURL(`${baseURL}${UrlMapper.loginUrl}`);
   });
 
-  test('should show toast if signup token is created', async ({ page }) => {
-    await fillSignupForm(page, { email: loginEmailSuccess });
-    await expect(page.getByText('A signup link has been sent')).toBeVisible();
+  // ASSERTION TO CONFIRM TOAST IS CREATED 
+  test('should show toast if signup token is created', async ({ signupPage }) => {
+    await fillSignupForm(signupPage, { email: loginEmailSuccess });
+    await signupPage.clickGetMagicLink();
+    expect(await signupPage.isToastVisible('A signup link has been sent')).toBe(true);
   });
 });

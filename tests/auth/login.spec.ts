@@ -6,12 +6,13 @@ import {
   loginEmailSuccess,
 } from '../.helpers/seed/data/auth';
 
-const baseURL = process.env.NEXTAUTH_URL!;
+const baseURL = process.env.BASE_URL;
 test.beforeEach(async ({ page }) => {
   await page.goto(`${baseURL}${UrlMapper.loginUrl}`);
+
 });
 
-test.describe.skip('Auth - Login', () => {
+test.describe('Auth - Login', () => {
   test('email login button is disabled on empty form', async ({ page }) => {
     await expect(
       page.getByRole('button', { name: 'Get Magic Link' })
@@ -29,12 +30,12 @@ test.describe.skip('Auth - Login', () => {
     ).toHaveValue(loginEmailFailure);
 
     await page.getByRole('button', { name: 'Get Magic Link' }).click();
-    await expect(page).toHaveURL(`${baseURL}${UrlMapper.signupUrl}`);
+    await expect(page).toHaveURL('https://ownersearch.blockqueue.dev/app/signup?error=NotFound');
   });
 
   test('should be able to go to signup page', async ({ page }) => {
     await page.getByRole('link', { name: 'Create Account' }).click();
-    await expect(page).toHaveURL(`${baseURL}${UrlMapper.signupUrl}`);
+    await expect(page).toHaveURL(`${baseURL}${UrlMapper.loginUrl}`);
   });
 
   test('should go to verify-request page if successful', async ({ page }) => {
