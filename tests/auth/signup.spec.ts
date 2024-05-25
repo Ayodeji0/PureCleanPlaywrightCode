@@ -28,7 +28,7 @@ test.beforeEach(async ({ page }) => {
 test.describe('Auth - Signup Form', () => {
 
  // VERIFY THAT LOGIN BUTTON REMAINS DISABLE UNTIL TERMS AND CONDITIONS BUTTON IS TRIGGERED
-  test('login buttons are disabled until T&C accepted', async ({ signupPage }) => {
+  test('signup buttons are disabled until T&C accepted', async ({ signupPage }) => {
     await expect(signupPage.getMagicLinkButton).toHaveAttribute('disabled', '');
     await expect(signupPage.googleSignUpButton).toHaveAttribute('disabled', '');
   });
@@ -51,4 +51,6 @@ test.describe('Auth - Signup Form', () => {
     await signupPage.clickGetMagicLink();
     expect(await signupPage.isToastVisible('A signup link has been sent')).toBe(true);
   });
+
+ 
 });
