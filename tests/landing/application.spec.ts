@@ -1,15 +1,40 @@
 import { test, expect } from '@playwright/test';
+import { UrlMapper } from '../.helpers/types';
 
 import { CONTRACTOR_TYPE } from '../.helpers/types';
-import { fillApplicationForm } from '../.helpers/actions/application';
+import { fillApplicationForm } from '../.helpers/actions';
 
-const baseURL = process.env.BASE_URL;
+const BASE_URL = process.env.BASE_URL;
 const apiURL = process.env.GRAPHQL_API_ENDPOINT!;
 test.beforeEach(async ({ page }) => {
-  await page.goto(`${baseURL}`);
+  await page.goto(`${BASE_URL}`);
 });
 
 test.describe('Landing Page - Submit Application', () => {
+  test('click on the sign in button to route to the login page', async ({ page }) => {
+    await page.getByRole('button', { name: 'Sign In' }).click();
+    const expectedURL = `${BASE_URL}${UrlMapper.loginUrl}`;
+    await page.waitForURL(expectedURL);
+    const actualURL = page.url();
+    // Log the actual URL
+    console.log('Actual URL:', actualURL);
+
+    // Compare the actual URL with the expected URL
+    expect(actualURL).toBe(expectedURL);
+  });
+
+  test('click on the sign in button to route to the sign up page', async ({ page }) => {
+    await page.getByRole('button', { name: 'Get Started' }).click();
+    const expectedURL = `${BASE_URL}${UrlMapper.signupUrl}`;
+    await page.waitForURL(expectedURL);
+    const actualURL = page.url();
+    // Log the actual URL
+    console.log('Actual URL:', actualURL);
+
+    // Compare the actual URL with the expected URL
+    expect(actualURL).toBe(expectedURL);
+  });
+  
   test('"Join Ownersearch" should open form', async ({ page }) => {
     await page.getByRole('button', { name: 'Join Ownersearch' }).click();
     await expect(page.getByLabel('Join Ownersearch as an Agent')).toBeVisible();

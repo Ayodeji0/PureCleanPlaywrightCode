@@ -12,6 +12,8 @@ export const fillApplicationForm = async (
   page: Page,
   data: AgentApplication
 ) => {
+  await page.getByRole('button',{name: 'Sign In' }).click()
+  await page.getByRole('button',{name: 'Get Started' }).click()
   await page.locator('input[name="firstName"]').click();
   await page.locator('input[name="firstName"]').fill(data.firstName);
   await page.locator('input[name="lastName"]').click();
@@ -22,4 +24,5 @@ export const fillApplicationForm = async (
   await page.locator('input[name="phone"]').fill(data.phone);
   await page.getByRole('combobox').click();
   await page.getByLabel(data.type, { exact: true }).click();
+  
 };
