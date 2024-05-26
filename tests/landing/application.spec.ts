@@ -3,10 +3,10 @@ import { test, expect } from '@playwright/test';
 import { CONTRACTOR_TYPE } from '../.helpers/types';
 import { fillApplicationForm } from '../.helpers/actions/application';
 
-const baseURL = process.env.NEXTAUTH_URL!;
+const baseURL = process.env.BASE_URL;
 const apiURL = process.env.GRAPHQL_API_ENDPOINT!;
 test.beforeEach(async ({ page }) => {
-  await page.goto(baseURL);
+  await page.goto(`${baseURL}`);
 });
 
 test.describe('Landing Page - Submit Application', () => {

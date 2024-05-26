@@ -41,10 +41,9 @@ test.describe('Auth - Login', () => {
     expect(await loginPage.getMagicLinkButtonIsEnabled()).toBe(true);
     await loginPage.clickGetMagicLink();
     
-    // Capture the actual URL
-    const actualURL = loginPage.page.url();
     const expectedURL = `${BASE_URL}${UrlMapper.signupUrl}`;
-
+    await loginPage.page.waitForURL(expectedURL);
+    const actualURL = loginPage.page.url();
     // Log the actual URL
     console.log('Actual URL:', actualURL);
 
