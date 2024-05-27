@@ -1,14 +1,19 @@
-import { test, expect } from '@playwright/test';
 
+import { test, expect } from '@playwright/test';
 import {
   searchFormSelectState,
   searchFormEnterAddress,
 } from '../.helpers/actions/search';
 import { UrlMapper } from '../.helpers/types';
 
-const baseURL = process.env.NEXTAUTH_URL!;
+const BASE_URL: string = process.env.BASE_URL || '';
+
+if (!BASE_URL) {
+  throw new Error('BASE_URL environment variable is not defined');
+}
+
 test.beforeEach(async ({ page }) => {
-  await page.goto(baseURL);
+  await page.goto(BASE_URL);
 });
 
 test.describe('Landing Page - Unauthenticated Search', () => {
@@ -35,7 +40,7 @@ test.describe('Landing Page - Unauthenticated Search', () => {
       .getByRole('button')
       .click();
 
-    const url = `${baseURL}${UrlMapper.loginUrl}`;
+    const url = `${BASE_URL}${UrlMapper.loginUrl}`;
     const query = `from=%2Fapp%2Fverifications%3Flocation%3D${address}`;
     await expect(page).toHaveURL(`${url}?${query}`);
   });
@@ -54,7 +59,10 @@ test.describe('Landing Page - Authenticated Search', () => {
       .getByRole('button')
       .click();
 
-    const url = `${baseURL}${UrlMapper.verificationsUrl}`;
+    const url = `${BASE_URL}${UrlMapper.verificationsUrl}`;
     await expect(page).toHaveURL(`${url}?location%3D${address}`);
   });
 });
+
+
+

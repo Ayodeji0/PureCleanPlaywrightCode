@@ -77,10 +77,13 @@ export class ApplicationPage {
     await expect(this.page.getByRole('button', { name: 'Submit Application' })).not.toHaveAttribute('disabled');
   }
 
-  async expectUserAlreadyExist () {
-    await this.page.waitForSelector('text= Application failed. User.');
-    await expect(this.page.getByText('Application failed.User already exists')).toBeVisible();
+  async expectUserAlreadyExist() {
+    await this.page.waitForSelector('text=Application failed. User already exists', { timeout: 10000 });
+    const element = await this.page.getByText('Application failed. User already exists');
+    await element.scrollIntoViewIfNeeded();
+    await expect(element).toBeVisible();
   }
+  
   async expectApplicationSubmitted() {
     await this.page.waitForSelector('text=Application Submitted.');
     await expect(this.page.getByText('Application Submitted.')).toBeVisible();
@@ -88,7 +91,7 @@ export class ApplicationPage {
 
   async expectSubmissionFailed() {
     console.log("Waiting for 'Failed to submit application.' text to be visible...");
-    await this.page.waitForSelector('text=Failed to submit application.', { timeout: 50000 });
+    await this.page.waitForSelector('text=Failed to submit application.');
     await expect(this.page.getByText('Failed to submit application.')).toBeVisible();
   }
 }
