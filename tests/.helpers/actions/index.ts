@@ -2,4 +2,4 @@
 
 export { SignupPage} from './signup';
 export { LoginPage } from './login';
-export { fillApplicationForm } from './application'
+export { ApplicationPage } from './application'
