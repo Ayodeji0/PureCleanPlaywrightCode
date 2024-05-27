@@ -36,6 +36,9 @@ export class ApplicationPage {
   async clickClose() {
     await this.page.getByRole('button', { name: 'Close' }).click();
   }
+  async clickCancel() {
+    await this.page.getByRole('button', { name: 'Cancel' }).click();
+  }
 
   async expectJoinOwnersearchFormVisible() {
     await expect(this.page.getByLabel('Join Ownersearch as an Agent')).toBeVisible();
@@ -74,6 +77,10 @@ export class ApplicationPage {
     await expect(this.page.getByRole('button', { name: 'Submit Application' })).not.toHaveAttribute('disabled');
   }
 
+  async expectUserAlreadyExist () {
+    await this.page.waitForSelector('text= Application failed. User.');
+    await expect(this.page.getByText('Application failed.User already exists')).toBeVisible();
+  }
   async expectApplicationSubmitted() {
     await this.page.waitForSelector('text=Application Submitted.');
     await expect(this.page.getByText('Application Submitted.')).toBeVisible();

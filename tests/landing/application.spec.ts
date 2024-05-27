@@ -4,13 +4,13 @@ import { ApplicationPage } from '../.helpers/actions';
 import { UrlMapper, CONTRACTOR_TYPE } from '../.helpers/types';
 
 const BASE_URL = process.env.BASE_URL;
-const apiURL = process.env.GRAPHQL_API_ENDPOINT;
+const API_URL = process.env.API_URL;
 
 if (!BASE_URL) {
   throw new Error('BASE_URL environment variable is not defined');
 }
-if (!apiURL) {
-  throw new Error('GRAPHQL_API_ENDPOINT environment variable is not defined');
+if (!API_URL) {
+  throw new Error('API_URL environment variable is not defined');
 }
 
 interface MyFixtures {
@@ -49,11 +49,16 @@ test.describe('Landing Page - Submit Application', () => {
     await applicationPage.clickClose();
     await applicationPage.expectJoinOwnersearchFormNotVisible();
   });
+  test('cancel button should cancel form', async ({ applicationPage }) => {
+    await applicationPage.clickJoinOwnersearch();
+    await applicationPage.clickCancel();
+    await applicationPage.expectJoinOwnersearchFormNotVisible();
+  });
 
   test('submit button should be disabled for missing required fields', async ({ applicationPage }) => {
     await applicationPage.clickJoinOwnersearch();
     const agentApplication = {
-      firstName: 'Agent',
+      firstName: 'Agent4',
       lastName: 'One',
       email: 'agent.one@email.com',
       phone: '',
@@ -66,14 +71,26 @@ test.describe('Landing Page - Submit Application', () => {
   test('completed form should submit successfully', async ({ applicationPage }) => {
     await applicationPage.clickJoinOwnersearch();
     const agentApplication = {
-      firstName: 'Agent',
-      lastName: 'One',
-      email: 'agent.one@email.com',
-      phone: '1234567890',
+      firstName: 'solomon',
+      lastName: 'Eugene',
+      email: 'eugene.one@email.com',
+      phone: '1326497382',
       type: CONTRACTOR_TYPE.AGENT,
     };
     await applicationPage.fillAndSubmitForm(agentApplication);
     await applicationPage.expectApplicationSubmitted();
+  });
+  test('submitting same form multiple times', async ({ applicationPage }) => {
+    await applicationPage.clickJoinOwnersearch();
+    const agentApplication = {
+      firstName: 'solomon',
+      lastName: 'Eugene',
+      email: 'eugene.one@email.com',
+      phone: '1326497382',
+      type: CONTRACTOR_TYPE.AGENT,
+    };
+    await applicationPage.fillAndSubmitForm(agentApplication);
+    await applicationPage.expectUserAlreadyExist();
   });
 
   test('should show error if submission fails', async ({ applicationPage }) => {
@@ -85,7 +102,7 @@ test.describe('Landing Page - Submit Application', () => {
       phone: '1234567809',
       type: CONTRACTOR_TYPE.AGENT,
     };
-    await applicationPage.page.route(apiURL, (route) => route.abort());
+    await applicationPage.page.route(API_URL, (route) => route.abort());
     await applicationPage.fillAndSubmitForm(agentApplication);
     await applicationPage.expectSubmissionFailed();
   });
