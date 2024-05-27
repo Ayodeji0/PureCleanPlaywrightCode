@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Landing Page - Unauthenticated Search', () => {
   test('should be able to select state', async ({ page }) => {
-    const state = 'Enugu';
+    const state = 'Akure';
     await searchFormSelectState(page, state);
     await expect(page.getByRole('main')).toContainText(state);
   });
@@ -31,7 +31,7 @@ test.describe('Landing Page - Unauthenticated Search', () => {
     ).toHaveValue(address);
   });
 
-  test.skip('should go to login page on submit', async ({ page }) => {
+  test('should go to login page on submit', async ({ page }) => {
     const address = 'independence';
     await searchFormEnterAddress(page, address);
     await page
