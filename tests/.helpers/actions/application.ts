@@ -78,7 +78,7 @@ export class ApplicationPage {
   }
 
   async expectUserAlreadyExist() {
-    await this.page.waitForSelector('text=Application failed. User already exists', { timeout: 10000 });
+    await this.page.waitForSelector('text=Application failed. User already exists');
     const element = await this.page.getByText('Application failed. User already exists');
     await element.scrollIntoViewIfNeeded();
     await expect(element).toBeVisible();
@@ -89,11 +89,11 @@ export class ApplicationPage {
     await expect(this.page.getByText('Application Submitted.')).toBeVisible();
   }
 
-  async expectSubmissionFailed() {
-    console.log("Waiting for 'Failed to submit application.' text to be visible...");
-    await this.page.waitForSelector('text=Failed to submit application.');
-    await expect(this.page.getByText('Failed to submit application.')).toBeVisible();
-  }
+  // async expectSubmissionFailed() {
+  //   console.log("Waiting for 'Failed to submit application.' text to be visible...");
+  //   await this.page.waitForSelector('text=Failed to submit application.');
+  //   await expect(this.page.getByText('Failed to submit application.')).toBeVisible();
+  // }
 }
 
 

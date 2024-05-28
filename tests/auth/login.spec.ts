@@ -40,16 +40,17 @@ test.describe('Auth - Login', () => {
     await loginPage.fillEmail(loginEmailFailure);
     expect(await loginPage.getMagicLinkButtonIsEnabled()).toBe(true);
     await loginPage.clickGetMagicLink();
-    
-    const expectedURL = `${BASE_URL}${UrlMapper.signupUrl}`;
-    await loginPage.page.waitForURL(expectedURL);
+    const  url = `${BASE_URL}${UrlMapper.signupUrl}`;
+    const query = 'error=NotFound'
+    await loginPage.page.waitForURL(`${url}?${query}`); 
     const actualURL = loginPage.page.url();
+    // VERIFY THE PAGE IS CORRECT
+    expect(actualURL).toBe(`${url}?${query}`);
     // Log the actual URL
     console.log('Actual URL:', actualURL);
-
-    // Compare the actual URL with the expected URL
-    expect(actualURL).toBe(expectedURL);
   });
+
+
 
   test('should be able to go to signup page', async ({ loginPage }) => {
     await loginPage.clickCreateAccount();

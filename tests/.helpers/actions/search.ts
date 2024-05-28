@@ -1,16 +1,37 @@
-import { type Page } from '@playwright/test';
 
-export const searchFormSelectState = async (page: Page, value: string) => {
-  await page.getByRole('combobox').first().click();
-  await page.getByPlaceholder('Search State...').fill(value);
-  await page.getByRole('option', { name: value }).click();
-};
+import { expect, Page } from '@playwright/test';
 
-// type address and press enter. Do not wait for google places
-export const searchFormEnterAddress = async (page: Page, value: string) => {
-  await page.locator('[id="headlessui-combobox-input-\\:r2\\:"]').click();
-  await page.locator('[id="headlessui-combobox-input-\\:r2\\:"]').fill(value);
-  await page
-    .locator('[id="headlessui-combobox-input-\\:r2\\:"]')
-    .press('Enter');
-};
+export class SearchPage {
+  public page: Page;
+  public addressInput = '[id="headlessui-combobox-input-\\:R1l6fbrpda\\:"]';
+  public submitButton = 'section:has-text("Make Informed DecisionsUnlock") >> role=button';
+
+  constructor(page: Page) {
+    this.page = page;
+  }
+
+  async goto(url: string) {
+    await this.page.goto(url);
+  }
+
+ 
+  // async enterAddress(address: string) {
+  //   await this.page.waitForSelector(this.addressInput).scrollIntoViewIfNeeded();
+  //   await this.page.fill(this.addressInput, address);
+  // }
+
+  async enterAddress(address: string) {
+    await this.page.waitForSelector(this.addressInput);
+    await this.page.locator(this.addressInput).scrollIntoViewIfNeeded();
+    await this.page.fill(this.addressInput, address);
+  }
+
+  
+  async submit() {
+    await this.page.click(this.submitButton);
+  }
+
+  async expectAddressValue(address: string) {
+    await expect(this.page.locator(this.addressInput)).toHaveValue(address);
+  }
+}

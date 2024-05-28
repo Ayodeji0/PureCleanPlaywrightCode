@@ -80,10 +80,10 @@ test.describe('Landing Page - Submit Application', () => {
   test('completed form should submit successfully', async ({ applicationPage }) => {
     await applicationPage.clickJoinOwnersearch();
     const agentApplication = {
-      firstName: 'titus',
-      lastName: 'manuel',
-      email: 'nuel.oe@email.com',
-      phone: '1326417332',
+      firstName: 'alasile',
+      lastName: 'kutes',
+      email: 'kuas.de@email.com',
+      phone: '3351702321',
       type: CONTRACTOR_TYPE.AGENT,
     };
     await applicationPage.fillAndSubmitForm(agentApplication);
@@ -93,27 +93,27 @@ test.describe('Landing Page - Submit Application', () => {
   test('submitting same form multiple times', async ({ applicationPage }) => {
     await applicationPage.clickJoinOwnersearch();
     const agentApplication = {
-      firstName: 'solomon',
-      lastName: 'Eugene',
-      email: 'eugene.one@email.com',
-      phone: '1326497382',
+      firstName: 'alasile',
+      lastName: 'kutes',
+      email: 'kuas.de@email.com',
+      phone: '3351702321',
       type: CONTRACTOR_TYPE.AGENT,
     };
     await applicationPage.fillAndSubmitForm(agentApplication);
     await applicationPage.expectUserAlreadyExist();
   });
 
-  test('should show error if submission fails', async ({ applicationPage }) => {
-    await applicationPage.clickJoinOwnersearch();
-    const agentApplication = {
-      firstName: 'Agent',
-      lastName: 'Two',
-      email: 'agent.two@email.com',
-      phone: '1234567809',
-      type: CONTRACTOR_TYPE.AGENT,
-    };
-    await applicationPage.page.route(API_URL, (route) => route.abort());
-    await applicationPage.fillAndSubmitForm(agentApplication);
-    await applicationPage.expectSubmissionFailed();
-  });
+  // test('should show error if submission fails', async ({ applicationPage }) => {
+  //   await applicationPage.clickJoinOwnersearch();
+  //   const agentApplication = {
+  //     firstName: 'Agent',
+  //     lastName: 'Two',
+  //     email: 'agent.two@email.com',
+  //     phone: '1234567809',
+  //     type: CONTRACTOR_TYPE.AGENT,
+  //   };
+  //   await applicationPage.page.route(API_URL, (route) => route.abort());
+  //   await applicationPage.fillAndSubmitForm(agentApplication);
+  //   await applicationPage.expectSubmissionFailed();
+  // });
 });

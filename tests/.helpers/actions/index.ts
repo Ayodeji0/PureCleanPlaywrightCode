@@ -3,3 +3,4 @@
 export { SignupPage} from './signup';
 export { LoginPage } from './login';
 export { ApplicationPage } from './application'
+export {SearchPage} from './search'

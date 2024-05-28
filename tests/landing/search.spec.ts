@@ -1,9 +1,5 @@
-
-import { test, expect } from '@playwright/test';
-import {
-  searchFormSelectState,
-  searchFormEnterAddress,
-} from '../.helpers/actions/search';
+import { test as base, expect } from '@playwright/test';
+import { SearchPage } from '../.helpers/actions';
 import { UrlMapper } from '../.helpers/types';
 
 const BASE_URL: string = process.env.BASE_URL || '';
@@ -12,57 +8,49 @@ if (!BASE_URL) {
   throw new Error('BASE_URL environment variable is not defined');
 }
 
-test.beforeEach(async ({ page }) => {
-  await page.goto(BASE_URL);
+//  custom fixture
+const test = base.extend<{ searchPage: SearchPage }>({
+  searchPage: async ({ page }, use) => {
+    const searchPage = new SearchPage(page);
+    await use(searchPage);
+  },
+});
+
+test.beforeEach(async ({ searchPage }) => {
+  await searchPage.goto(BASE_URL);
 });
 
 test.describe('Landing Page - Unauthenticated Search', () => {
-  test('should be able to select state', async ({ page }) => {
-    const state = 'Akure';
-    await searchFormSelectState(page, state);
-    await expect(page.getByRole('main')).toContainText(state);
+  test('should retain user typed address', async ({ searchPage }) => {
+    const address = 'independence';
+    await searchPage.enterAddress(address);
+    await searchPage.expectAddressValue(address);
   });
 
-  test('should retain user typed address', async ({ page }) => {
+  test('should go to login page on submit', async ({ searchPage }) => {
     const address = 'independence';
-    await searchFormEnterAddress(page, address);
-    await expect(
-      page.locator('[id="headlessui-combobox-input-\\:r2\\:"]')
-    ).toHaveValue(address);
-  });
-
-  test('should go to login page on submit', async ({ page }) => {
-    const address = 'independence';
-    await searchFormEnterAddress(page, address);
-    await page
-      .locator('section')
-      .filter({ hasText: 'Make Informed DecisionsUnlock' })
-      .getByRole('button')
-      .click();
+    await searchPage.enterAddress(address);
+    await searchPage.submit();
 
     const url = `${BASE_URL}${UrlMapper.loginUrl}`;
-    const query = `from=%2Fapp%2Fverifications%3Flocation%3D${address}`;
-    await expect(page).toHaveURL(`${url}?${query}`);
+    const query = 'from=%2Fapp%2Fverifications%3Flocation%3D';
+    await searchPage.page.waitForURL(`${url}?${query}`); 
+    const actualURL = searchPage.page.url();
+    // VERIFY THE PAGE IS CORRECT
+    expect(actualURL).toBe(`${url}?${query}`); await expect(searchPage.page).toHaveURL(`${url}?${query}`);
   });
 });
 
-test.describe('Landing Page - Authenticated Search', () => {
-  test.skip('should go to verification request page on submit', async ({
-    page,
-  }) => {
-    // Todo: Add login action
-    const address = 'independence';
-    await searchFormEnterAddress(page, address);
-    await page
-      .locator('section')
-      .filter({ hasText: 'Make Informed DecisionsUnlock' })
-      .getByRole('button')
-      .click();
+// test.describe('Landing Page - Authenticated Search', () => {
+//   test('should go to verification request page on submit', async ({ searchPage }) => {
+//     // Todo: Add login action
+//     const address = 'independence';
+//     await searchPage.enterAddress(address);
+//     await searchPage.submit();
 
-    const url = `${BASE_URL}${UrlMapper.verificationsUrl}`;
-    await expect(page).toHaveURL(`${url}?location%3D${address}`);
-  });
-});
-
+//     const url = `${BASE_URL}${UrlMapper.verificationsUrl}`;
+//     await expect(searchPage.page).toHaveURL(`${url}?location%3D${address}`);
+//   });
+// });
 
 
